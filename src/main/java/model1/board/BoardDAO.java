@@ -139,7 +139,6 @@ public class BoardDAO extends JDBConnect {
 				+ " FROM member M INNER JOIN board B "
 				+ " ON M.id=B.id "
 				+ " WHERE num=?";
-		System.out.println(query);
 		
 		try {
 			psmt = con.prepareStatement(query);
@@ -171,7 +170,6 @@ public class BoardDAO extends JDBConnect {
 		String query = "UPDATE board SET "
 				+ " visitcount = visitcount+1 "
 				+ " WHERE num=?";
-		System.out.println(query);
 		
 		try {
 			psmt = con.prepareStatement(query);
@@ -183,4 +181,116 @@ public class BoardDAO extends JDBConnect {
 			e.printStackTrace();
 		}
 	}
+	
+	//게시물 수정 : 수정할 내용을 DTO객체에 저장 후 매개변수로 전달
+	public int updateEdit(BoardDTO dto) {
+		int result = 0;
+		
+		try {
+			//update를 위한 쿼리문
+			String query = "UPDATE board SET "
+					+ " title=?, content=? "
+					+ " WHERE num=?";
+			//prepared 객체 생성
+			psmt = con.prepareStatement(query);
+			//인파라미터 설정
+			psmt.setString(1, dto.getTitle());
+			psmt.setString(2, dto.getContent());
+			psmt.setString(3, dto.getNum());
+			//쿼리 실행
+			result = psmt.executeUpdate();
+		}
+		catch (Exception e) {
+			System.out.println("게시물 수정 중 예외 발생");
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	//DTO객체를 받아 게시물 삭제처리 
+	public int deletePost(BoardDTO dto) {
+		int result = 0;
+		
+		try {
+			//쿼리문 작성 
+			String query = "DELETE FROM board WHERE num=?";
+			//prepared객체 생성 및 인파라미터 설정
+			psmt = con.prepareStatement(query);
+			psmt.setString(1, dto.getNum());
+			//쿼리실행
+			result = psmt.executeUpdate();
+		}
+		catch(Exception e) {
+			System.out.println("게시물 삭제 중 예외 발생");
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	//게시판의 페이징 처리를 위한 메서드 
+	public List<BoardDTO> selectListPage(Map<String, Object>map) {
+		List<BoardDTO> bbs = new Vector<BoardDTO>();
+		
+		//3개의 서브 쿼리문을 통한 페이지 처리
+		String query = " SELECT * FROM( "
+					+ " 	SELECT Tb.*, ROWNUM rNum FROM ( "
+					+ " 		SELECT * FROM board ";
+		
+		//검색 조건 추가 (검색어가 있는 경우에만 where절이 추가됨)
+		if(map.get("searchWord")!= null) {
+			query += " WHERE " + map.get("searchWord") 
+					+ " LIKE '%" + map.get("searchWord") +"%' ";
+		}
+		
+		
+		query += "	  ORDER BY num DESC "
+				+ "	 )Tb "
+				+ " ) "
+				+ " WHERE rNum BETWEEN ? AND ?";
+		/* JSP에서 계산된 게시물의 구간을 인파라미터로 처리함 */
+		
+		try {
+			//쿼리 실행을 위한 prepared객체 생성 
+			psmt = con.prepareStatement(query);
+			//인파라미터 설정 : 구간을 위한 start, end를 설정함
+			psmt.setString(1, map.get("start").toString());
+			psmt.setString(2, map.get("end").toString());
+			//쿼리문 실행
+			rs = psmt.executeQuery();
+			//select한 게시물의 갯수만큼 반복한다. 
+			while(rs.next()) { 
+				//한 행(게시물 하나)의 데이터를 DTO에 저장
+				BoardDTO dto = new BoardDTO();
+				dto.setNum(rs.getString("num"));
+				dto.setTitle(rs.getString("title"));
+				dto.setContent(rs.getString("content"));
+				dto.setPostdate(rs.getDate("postdate")); 
+				dto.setId(rs.getString("id"));
+				dto.setVisitcount(rs.getString("visitcount"));
+				
+				//반환할 결과 목록에 게시물 추가
+				bbs.add(dto);
+			}
+		}
+		catch(Exception e) {
+			System.out.println("게시물 상세보기 중 예외 발생");
+			e.printStackTrace();
+		}
+		//목록 반환
+		return bbs;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
