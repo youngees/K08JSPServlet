@@ -37,6 +37,7 @@ try{
 	String newFileName = now + ext;
 	
 	//기존의 파일명을 새로운 파일명으로 변경한다.
+	//File.separator은 /(슬러쉬)와 같은 역할을 함.
 	File oldFile = new File(saveDirectory + File.separator + fileName);
 	File newFile = new File(saveDirectory + File.separator + newFileName);
 	oldFile.renameTo(newFile);
