@@ -1,5 +1,7 @@
 package membership;
 
+import javax.servlet.ServletContext;
+
 import common.JDBConnect;
 /*
 DAO(Data Access Object) : 실제 데이터베이스에 접근하여
@@ -9,9 +11,15 @@ DAO(Data Access Object) : 실제 데이터베이스에 접근하여
 //DB 연결을 위한 클래스를 상속한다. 
 public class MemberDAO extends JDBConnect {
 	
+	
 	//인자가 4개인 부모의 생성자를 호출하여 연결한다. 
 	public MemberDAO(String drv, String url, String id, String pw) {
 		super(drv, url, id, pw);
+	}
+	
+	//application 내장객체만 매개변수로 받아 부모로 전달하는 생성자
+	public MemberDAO(ServletContext application) {
+		super(application);
 	}
 	
 	/*
@@ -47,4 +55,5 @@ public class MemberDAO extends JDBConnect {
 		//반환은 항상 함수를 호출한 지점에서 한다. 
 		return dto;
 	}
+	
 }
