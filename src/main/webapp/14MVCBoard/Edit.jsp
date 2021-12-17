@@ -23,50 +23,42 @@ function validateForm(form) {
 		form.content.focus();
 		return false;
 	}
-	
-	//첨부파일은 null을 허용하는 컬럼이므로 공백체크를 하지않는다.
-	
-	if(form.pass.value == "") {
-		alert("비밀번호를 입력하세요.");
-		form.pass.focus();
-		return false;
-	}
 }
 </script>
 </head>
 <body>
-	<h2>파일 첨부형 게시판 - 글쓰기(Write)</h2>
+	<h2>파일 첨부형 게시판 - 수정하기(Edit)</h2>
 	<form name="writeFrm" method="post" enctype="multipart/form-data"
-		action="../mvcboard/write.do" onsubmit="return validateForm(this);">
+		action="../mvcboard/edit.do" onsubmit="return validateForm(this);">
+		
+	<input type="hid-den" name="idx" value="${dto.idx }" />
+	<input type="hid-den" name="prevOfile" value="${dto.ofile }" />
+	<input type="hid-den" name="prevSfile" value="${dto.sfile }" />
+	
 		<table border="1" width="90%">
 			<tr>
 				<td>작성자</td>
 				<td>
-					<input type="text" name="name" style="width: 150px;"/>
+					<input type="text" name="name" style="width: 150px;" value="${dto.name }"/>
 				</td>
 			</tr>
 			<tr>
 				<td>제목</td>
 				<td>
-					<input type="text" name="title" style="width: 90%;"/>
+					<input type="text" name="title" style="width: 90%;" value="${dto.title }"/>
 				</td>
 			</tr>
 			<tr>
 				<td>내용</td>
 				<td>
-					<textarea name="content" style="width:90%; height: 100px;"></textarea>
+					<textarea name="content" style="width:90%; height: 100px;">${dto.content}
+					</textarea>
 				</td>
 			</tr>
 			<tr>
 				<td>첨부파일</td>
 				<td>
 					<input type="file" name="ofile" />
-				</td>
-			</tr>
-			<tr>
-				<td>비밀번호</td>
-				<td>
-					<input type="password" name="pass" style="width: 100px;"/>
 				</td>
 			</tr>
 			<tr>
