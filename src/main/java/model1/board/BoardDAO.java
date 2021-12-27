@@ -239,7 +239,7 @@ public class BoardDAO extends JDBConnect {
 		
 		//검색 조건 추가 (검색어가 있는 경우에만 where절이 추가됨)
 		if(map.get("searchWord")!= null) {
-			query += " WHERE " + map.get("searchWord") 
+			query += " WHERE " + map.get("searchField") 
 					+ " LIKE '%" + map.get("searchWord") +"%' ";
 		}
 		
